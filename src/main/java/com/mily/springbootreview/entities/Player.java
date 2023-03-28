@@ -1,6 +1,7 @@
-package com.mily.springbootreview.data;
+package com.mily.springbootreview.entities;
 
 import com.mily.springbootreview.exceptions.DuplicateNumberException;
+import com.mily.springbootreview.exceptions.NotFoundException;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -66,12 +67,17 @@ public class Player {
         return String.format("%sA%sB", a, b);
     }
 
-    private void checkNumber(String answer) {
+    private void checkNumber(String number) {
+
+        if (number == null || number.isBlank()) {
+            throw new NotFoundException("The player must set number before they guess.");
+        }
+
         Set<Character> set = new HashSet<>();
-        for (int i = 0; i < answer.length(); i++) {
-            char c = answer.charAt(i);
+        for (int i = 0; i < number.length(); i++) {
+            char c = number.charAt(i);
             if (!set.add(c)) {
-                throw new DuplicateNumberException("The answer must be 4 non-repeating digits.");
+                throw new DuplicateNumberException("The number must be 4 non-repeating digits.");
             }
         }
     }

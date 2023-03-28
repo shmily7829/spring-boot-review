@@ -8,4 +8,8 @@ import lombok.Data;
 public class GuessPlayerNumberData {
     private String result;
     private String winnerId;
+
+    public boolean hasWinner() {
+        return winnerId != null && !winnerId.isBlank();
+    }
 }

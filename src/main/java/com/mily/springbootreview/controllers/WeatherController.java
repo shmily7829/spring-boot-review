@@ -1,7 +1,6 @@
 package com.mily.springbootreview.controllers;
 
 import com.mily.springbootreview.data.request.WeatherRequest;
-import com.mily.springbootreview.data.response.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;

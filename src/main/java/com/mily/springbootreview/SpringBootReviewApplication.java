@@ -1,13 +1,7 @@
 package com.mily.springbootreview;
 
-import com.mily.springbootreview.data.GameState;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 //1. spring MVC Request-Controller-Service-Repository-DB 各 Layer 之間的關係
 //2. Repository Layer 用來隔離 DB Layer的實作

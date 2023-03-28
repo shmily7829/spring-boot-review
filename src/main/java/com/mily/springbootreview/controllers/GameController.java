@@ -1,8 +1,9 @@
 package com.mily.springbootreview.controllers;
 
 import com.mily.springbootreview.data.request.SetPlayerNumberRequest;
-import com.mily.springbootreview.data.Game;
+import com.mily.springbootreview.entities.Game;
 import com.mily.springbootreview.data.request.GuessPlayerNumberRequest;
+import com.mily.springbootreview.data.response.GameStateData;
 import com.mily.springbootreview.data.response.GuessPlayerNumberData;
 import com.mily.springbootreview.data.response.Response;
 import com.mily.springbootreview.exceptions.*;
@@ -60,13 +61,32 @@ public class GameController {
 
             GuessPlayerNumberData guessData = gameService.guessPlayerNumber(request, gameId);
             response.setData(guessData);
-            response.setMessage(guessData.getResult());
 
-        } catch (NotFoundException | NotPlayerTurnException | StateFormatException ex) {
+            String winnerId = guessData.getWinnerId();
+
+            String message = guessData.hasWinner() ? String.format("The player %s wins!", winnerId) : guessData.getResult();
+
+            response.setMessage(message);
+            return ResponseEntity.ok(response);
+
+        } catch (NotFoundException | NotPlayerTurnException | StateFormatException | DuplicateNumberException ex) {
             response.setMessage(ex.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
-        return ResponseEntity.ok(response);
+    }
 
+    @GetMapping("/v1/games/{gameId}")
+    public ResponseEntity<Response<GameStateData>> getGameState(@PathVariable String gameId) {
+        Response<GameStateData> response = new Response<>();
+
+        try {
+
+            GameStateData gameStateData = gameService.getGameState(gameId);
+            response.setData(gameStateData);
+            return ResponseEntity.ok(response);
+
+        } catch (NotFoundException ex) {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

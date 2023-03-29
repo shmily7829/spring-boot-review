@@ -1,6 +1,6 @@
 package com.mily.springbootreview.exceptions;
 
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends ServiceException {
     public NotFoundException() {
     }
 

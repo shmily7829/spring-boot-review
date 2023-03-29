@@ -1,6 +1,6 @@
 package com.mily.springbootreview.exceptions;
 
-public class DuplicateNumberException extends RuntimeException {
+public class DuplicateNumberException extends ServiceException {
     public DuplicateNumberException() {
     }
 

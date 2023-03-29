@@ -1,15 +1,15 @@
 package com.mily.springbootreview.services;
 
-import com.mily.springbootreview.entities.GameStateEnum;
 import com.mily.springbootreview.data.request.GuessPlayerNumberRequest;
+import com.mily.springbootreview.data.request.SetPlayerNumberRequest;
 import com.mily.springbootreview.data.response.GameStateData;
 import com.mily.springbootreview.data.response.GuessPlayerNumberData;
+import com.mily.springbootreview.entities.Game;
+import com.mily.springbootreview.entities.GameStateEnum;
+import com.mily.springbootreview.entities.Player;
+import com.mily.springbootreview.exceptions.NotFoundException;
 import com.mily.springbootreview.exceptions.NotPlayerTurnException;
 import com.mily.springbootreview.exceptions.NumberFormatException;
-import com.mily.springbootreview.exceptions.NotFoundException;
-import com.mily.springbootreview.entities.Player;
-import com.mily.springbootreview.data.request.SetPlayerNumberRequest;
-import com.mily.springbootreview.entities.Game;
 import com.mily.springbootreview.respositories.GameRepository;
 import com.mily.springbootreview.respositories.PlayerRepository;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +93,7 @@ public class GameService {
         game.setTurnPlayerId(opponentId);
         game.addGuessNumber(guessNumber);
         gameRepository.save(game);
+
         return guessResult;
     }
 

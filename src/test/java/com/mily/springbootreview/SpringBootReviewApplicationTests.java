@@ -2,8 +2,8 @@ package com.mily.springbootreview;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mily.springbootreview.entities.Game;
 import com.mily.springbootreview.data.response.Response;
+import com.mily.springbootreview.entities.Game;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +63,7 @@ class SpringBootReviewApplicationTests {
         String gameId = game.getGameId();
         String player1Id = game.getPlayer1Id();
 
-        setAnswer(gameId, player1Id, requestBody)
+        setPlayerAnswer(gameId, player1Id, requestBody)
                 .andExpect(status().isOk());
     }
 
@@ -77,9 +77,8 @@ class SpringBootReviewApplicationTests {
                 .put("number", "4567");
 
         String gameId = "1111";
-        setAnswer(gameId, "player1Id", requestBody)
+        setPlayerAnswer(gameId, "player1Id", requestBody)
                 .andExpect(status().isBadRequest());
-
     }
 
     @DisplayName("設置階段玩家答案數字有重複")
@@ -96,7 +95,7 @@ class SpringBootReviewApplicationTests {
         String gameId = game.getGameId();
         String player1Id = game.getPlayer1Id();
 
-        setAnswer(gameId, player1Id, requestBody)
+        setPlayerAnswer(gameId, player1Id, requestBody)
                 .andExpect(status().isBadRequest());
     }
 
@@ -115,11 +114,11 @@ class SpringBootReviewApplicationTests {
         String gameId = game.getGameId();
         String player1Id = game.getPlayer1Id();
 
-        setAnswer(gameId, player1Id, requestBody)
+        setPlayerAnswer(gameId, player1Id, requestBody)
                 .andExpect(status().isOk());
 
         //第二次打API，res為badRequest
-        setAnswer(gameId, player1Id, requestBody)
+        setPlayerAnswer(gameId, player1Id, requestBody)
                 .andExpect(status().isBadRequest());
     }
 
@@ -133,11 +132,11 @@ class SpringBootReviewApplicationTests {
                 .put("number", "2347");
 
         //設置player1的答案
-        setAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         //設置player2的答案
-        setAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         //玩家猜數字成功
@@ -145,7 +144,7 @@ class SpringBootReviewApplicationTests {
                 .put("guesserId", game.getPlayer1Id())
                 .put("number", "1234");
 
-        guessNumber(game, guessNumberRequest)
+        guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.result").exists())
                 .andExpect(jsonPath("$.data.result").value("0A3B"));
@@ -160,11 +159,11 @@ class SpringBootReviewApplicationTests {
                 .put("number", "2347");
 
         //設置player1的答案
-        setAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         //設置player2的答案
-        setAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         //玩家猜數字成功
@@ -172,7 +171,7 @@ class SpringBootReviewApplicationTests {
                 .put("guesserId", game.getPlayer1Id())
                 .put("number", "2347");
 
-        guessNumber(game, guessNumberRequest)
+        guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.result").exists())
                 .andExpect(jsonPath("$.data.result").value("4A"))
@@ -191,7 +190,7 @@ class SpringBootReviewApplicationTests {
 
         //設置不存在的GameId
         game.setGameId("1111111");
-        guessNumber(game, guessNumberRequest)
+        guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(status().isBadRequest());
     }
 
@@ -205,7 +204,7 @@ class SpringBootReviewApplicationTests {
                 .put("guesserId", game.getPlayer1Id())
                 .put("number", "2347");
 
-        guessNumber(game, guessNumberRequest)
+        guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(jsonPath("message").value("The players must set their answers before they guess."))
                 .andExpect(status().isBadRequest());
     }
@@ -219,18 +218,18 @@ class SpringBootReviewApplicationTests {
                 .put("number", "5637");
 
         //設置player1的答案
-        setAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         //設置player2的答案
-        setAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         JSONObject guessNumberRequest = new JSONObject()
                 .put("guesserId", game.getPlayer1Id())
                 .put("number", "1111");
 
-        guessNumber(game, guessNumberRequest)
+        guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(jsonPath("message").value("The number must be 4 non-repeating digits."))
                 .andExpect(status().isBadRequest());
     }
@@ -244,16 +243,12 @@ class SpringBootReviewApplicationTests {
                 .put("number", "5637");
 
         //設置player1的答案
-        setAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer1Id(), setNumberRequest)
                 .andExpect(status().isOk());
 
         //設置player2的答案
-        setAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
+        setPlayerAnswer(game.getGameId(), game.getPlayer2Id(), setNumberRequest)
                 .andExpect(status().isOk());
-
-        JSONObject guessNumberRequest = new JSONObject()
-                .put("guesserId", game.getPlayer2Id())
-                .put("number", "1298");
 
         //Given
         //玩家1 和玩家2
@@ -263,7 +258,11 @@ class SpringBootReviewApplicationTests {
         //THEN
         //Return badRequest
 
-        guessNumber(game, guessNumberRequest)
+        JSONObject guessNumberRequest = new JSONObject()
+                .put("guesserId", game.getPlayer2Id())
+                .put("number", "1298");
+
+        guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(jsonPath("message").value("The player can only guess during his turn!"))
                 .andExpect(status().isBadRequest());
 
@@ -311,15 +310,17 @@ class SpringBootReviewApplicationTests {
         return response.getData();
     }
 
-    private ResultActions setAnswer(String gameId, String playerId, JSONObject setAnswerRequest) throws Exception {
+    private ResultActions setPlayerAnswer(String gameId, String playerId, JSONObject setAnswerRequest) throws Exception {
         return mockMvc.perform(put("/api/v1/games/{gameId}/players/{playerId}/answer", gameId, playerId)
                         .headers(httpHeaders)
                         .content(setAnswerRequest.toString())
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+                .andExpect(jsonPath("message").exists())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print());
     }
 
-    private ResultActions guessNumber(Game game, JSONObject guessNumberRequest) throws Exception {
+    private ResultActions guessPlayerNumber(Game game, JSONObject guessNumberRequest) throws Exception {
         return mockMvc.perform(post("/api/v1/games/{gameId}/guess", game.getGameId())
                         .headers(httpHeaders)
                         .content(guessNumberRequest.toString())

@@ -1,6 +1,6 @@
 package com.mily.springbootreview.exceptions;
 
-public class NumberFormatException extends RuntimeException {
+public class NumberFormatException extends ServiceException {
 
     public NumberFormatException() {
     }

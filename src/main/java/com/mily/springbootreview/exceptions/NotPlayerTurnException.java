@@ -1,6 +1,6 @@
 package com.mily.springbootreview.exceptions;
 
-public class NotPlayerTurnException extends RuntimeException{
+public class NotPlayerTurnException extends ServiceException{
     public NotPlayerTurnException() {
     }
 

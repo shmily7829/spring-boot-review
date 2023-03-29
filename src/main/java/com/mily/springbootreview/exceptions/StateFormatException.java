@@ -1,6 +1,6 @@
 package com.mily.springbootreview.exceptions;
 
-public class StateFormatException extends RuntimeException{
+public class StateFormatException extends ServiceException{
     public StateFormatException() {
     }
 

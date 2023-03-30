@@ -33,18 +33,19 @@ public class GameController {
     }
 
     @PutMapping("v1/games/{gameId}/players/{playerId}/answer")
-    public ResponseEntity<Response<Game>> setPlayerNumber(@RequestBody SetPlayerNumberRequest request,
+    public Response<Game> setPlayerNumber(@RequestBody SetPlayerNumberRequest request,
                                                           @PathVariable String gameId,
                                                           @PathVariable String playerId) {
+        //res body
         Response<Game> response = new Response<>();
 
         gameService.setPlayerNumber(request, gameId, playerId);
         response.setMessage("The answer has been set.");
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @PostMapping("/v1/games/{gameId}/guess")
-    public ResponseEntity<Response<GuessPlayerNumberData>> guessPlayerNumber(@RequestBody GuessPlayerNumberRequest request,
+    public Response<GuessPlayerNumberData> guessPlayerNumber(@RequestBody GuessPlayerNumberRequest request,
                                                                              @PathVariable String gameId) {
         GuessPlayerNumberData guessData = gameService.guessPlayerNumber(request, gameId);
 
@@ -55,7 +56,7 @@ public class GameController {
         String message = guessData.hasWinner() ? String.format("The player %s wins!", winnerId) : guessData.getResult();
         response.setMessage(message);
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @GetMapping("/v1/games/{gameId}")

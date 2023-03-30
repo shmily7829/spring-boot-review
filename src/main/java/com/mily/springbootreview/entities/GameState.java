@@ -1,12 +1,12 @@
 package com.mily.springbootreview.entities;
 
-public enum GameStateEnum {
+public enum GameState {
     SETTING_ANSWER("setting-answer"),
     GUESSING("guessing");
 
     private final String state;
 
-    GameStateEnum(String state) {
+    GameState(String state) {
         this.state = state;
     }
 

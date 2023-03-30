@@ -39,6 +39,7 @@ class SpringBootReviewApplicationTests {
     public void init() {
         httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
     }
 
     @DisplayName("創建遊戲")
@@ -182,14 +183,14 @@ class SpringBootReviewApplicationTests {
     @Test
     void givenPlayerGuessing_whenGameIdNotExist_thenReturnBadRequest() throws Exception {
         Game game = new Game();
+        //設置不存在的GameId
+        game.setGameId("1111111");
 
         //猜數字的request
         JSONObject guessNumberRequest = new JSONObject()
                 .put("guesserId", game.getPlayer1Id())
                 .put("number", "2347");
 
-        //設置不存在的GameId
-        game.setGameId("1111111");
         guessPlayerNumber(game, guessNumberRequest)
                 .andExpect(status().isBadRequest());
     }
@@ -205,8 +206,8 @@ class SpringBootReviewApplicationTests {
                 .put("number", "2347");
 
         guessPlayerNumber(game, guessNumberRequest)
-                .andExpect(jsonPath("message").value("The players must set their answers before they guess."))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message").value("The players must set their answers before they guess."));
     }
 
     @DisplayName("開始猜數字猜測者的猜數有重複")
@@ -280,8 +281,7 @@ class SpringBootReviewApplicationTests {
 
         mockMvc.perform(get("/api/v1/games/{gameId}", gameId)
                         .headers(httpHeaders)
-                        .content(request.toString())
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(request.toString()))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.gameId").exists())
@@ -313,8 +313,7 @@ class SpringBootReviewApplicationTests {
     private ResultActions setPlayerAnswer(String gameId, String playerId, JSONObject setAnswerRequest) throws Exception {
         return mockMvc.perform(put("/api/v1/games/{gameId}/players/{playerId}/answer", gameId, playerId)
                         .headers(httpHeaders)
-                        .content(setAnswerRequest.toString())
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(setAnswerRequest.toString()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print());
@@ -323,8 +322,7 @@ class SpringBootReviewApplicationTests {
     private ResultActions guessPlayerNumber(Game game, JSONObject guessNumberRequest) throws Exception {
         return mockMvc.perform(post("/api/v1/games/{gameId}/guess", game.getGameId())
                         .headers(httpHeaders)
-                        .content(guessNumberRequest.toString())
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(guessNumberRequest.toString()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print());

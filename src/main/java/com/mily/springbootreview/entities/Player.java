@@ -20,6 +20,7 @@ public class Player {
         this.playerId = playerId;
     }
 
+    //Game
     @Id
     private String playerId;
     private String answer;

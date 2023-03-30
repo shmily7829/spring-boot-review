@@ -3,10 +3,7 @@ package com.mily.springbootreview.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,19 +14,29 @@ import java.util.UUID;
 public class Game {
 
     @Id
+    @Column(name = "game_id")
     private String gameId;
+    //Player
+    @Column(name = "player1_id")
     private String player1Id;
+
+    @Column(name = "player2_id")
     private String player2Id;
-    private GameStateEnum gameStateEnum;
+
+    @Column(name = "game_state")
+    private GameState gameState;
+
+    @Column(name = "turn_player_id")
     private String turnPlayerId;
     @ElementCollection
+    @Column(name = "guess_history")
     private List<String> guessHistory;
 
     public Game() {
         setGameId(UUID.randomUUID().toString());
         setPlayer1Id(UUID.randomUUID().toString());
         setPlayer2Id(UUID.randomUUID().toString());
-        setGameStateEnum(GameStateEnum.SETTING_ANSWER);
+        setGameState(GameState.SETTING_ANSWER);
         setTurnPlayerId(player1Id);
     }
 

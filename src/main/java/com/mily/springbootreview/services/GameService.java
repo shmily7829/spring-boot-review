@@ -5,7 +5,7 @@ import com.mily.springbootreview.data.request.SetPlayerNumberRequest;
 import com.mily.springbootreview.data.response.GameStateData;
 import com.mily.springbootreview.data.response.GuessPlayerNumberData;
 import com.mily.springbootreview.entities.Game;
-import com.mily.springbootreview.entities.GameStateEnum;
+import com.mily.springbootreview.entities.GameState;
 import com.mily.springbootreview.entities.Player;
 import com.mily.springbootreview.exceptions.NotFoundException;
 import com.mily.springbootreview.exceptions.NotPlayerTurnException;
@@ -38,7 +38,7 @@ public class GameService {
                                 String playerId) {
 
         Game game = findGame(gameId);
-        game.setGameStateEnum(GameStateEnum.SETTING_ANSWER);
+        game.setGameState(GameState.SETTING_ANSWER);
         gameRepository.save(game);
 
         if (!game.hasPlayer(playerId)) {
@@ -65,7 +65,7 @@ public class GameService {
         String guessNumber = request.getNumber();
 
         //設置遊戲狀態
-        game.setGameStateEnum(GameStateEnum.GUESSING);
+        game.setGameState(GameState.GUESSING);
 
         //不在猜測者的回合中
         if (!game.getTurnPlayerId().equals(guesserId)) {

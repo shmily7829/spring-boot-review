@@ -2,10 +2,10 @@ package com.mily.springbootreview.controllers;
 
 import com.mily.springbootreview.data.request.GuessPlayerNumberRequest;
 import com.mily.springbootreview.data.request.SetPlayerNumberRequest;
+import com.mily.springbootreview.data.response.GameData;
 import com.mily.springbootreview.data.response.GameStateData;
 import com.mily.springbootreview.data.response.GuessPlayerNumberData;
 import com.mily.springbootreview.data.response.Response;
-import com.mily.springbootreview.entities.Game;
 import com.mily.springbootreview.services.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +21,11 @@ public class GameController {
     }
 
     @PostMapping("/v1/games")
-    public Response<Game> createGame() {
+    public Response<GameData> createGame() {
 
-        Game game = gameService.createGame();
+        GameData game = gameService.createGame();
 
-        Response<Game> response = new Response<>();
+        Response<GameData> response = new Response<>();
         response.setData(game);
         response.setMessage("The game has been created.");
 
@@ -33,12 +33,11 @@ public class GameController {
     }
 
     @PutMapping("v1/games/{gameId}/players/{playerId}/answer")
-    public Response<Game> setPlayerNumber(@RequestBody SetPlayerNumberRequest request,
-                                                          @PathVariable String gameId,
-                                                          @PathVariable String playerId) {
+    public Response<GameData> setPlayerNumber(@RequestBody SetPlayerNumberRequest request,
+                                              @PathVariable String gameId,
+                                              @PathVariable String playerId) {
         //res body
-        Response<Game> response = new Response<>();
-
+        Response<GameData> response = new Response<>();
         gameService.setPlayerNumber(request, gameId, playerId);
         response.setMessage("The answer has been set.");
         return response;
@@ -46,7 +45,7 @@ public class GameController {
 
     @PostMapping("/v1/games/{gameId}/guess")
     public Response<GuessPlayerNumberData> guessPlayerNumber(@RequestBody GuessPlayerNumberRequest request,
-                                                                             @PathVariable String gameId) {
+                                                             @PathVariable String gameId) {
         GuessPlayerNumberData guessData = gameService.guessPlayerNumber(request, gameId);
 
         Response<GuessPlayerNumberData> response = new Response<>();
@@ -61,7 +60,6 @@ public class GameController {
 
     @GetMapping("/v1/games/{gameId}")
     public ResponseEntity<Response<GameStateData>> getGameState(@PathVariable String gameId) {
-
 
         GameStateData gameStateData = gameService.getGameState(gameId);
 

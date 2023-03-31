@@ -2,44 +2,36 @@ package com.mily.springbootreview.entities;
 
 import com.mily.springbootreview.exceptions.DuplicateNumberException;
 import com.mily.springbootreview.exceptions.NotFoundException;
+import com.mily.springbootreview.exceptions.NumberFormatException;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "player")
+@NoArgsConstructor
 public class Player {
 
-    public Player() {
-    }
-
-    public Player(String playerId) {
-        this.playerId = playerId;
-    }
-
-    //Game
     @Id
+    @Column(name = "player_id")
     private String playerId;
+
+    @Column(name = "answer")
     private String answer;
 
-    public String getPlayerId() {
-        return playerId;
-    }
+    @Column(name = "game_Id")
+    private String gameId;
 
-    public void setPlayerId(String playerId) {
-        this.playerId = playerId;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        checkNumber(answer);
-        this.answer = answer;
+    public Player(String gameId) {
+        this.playerId = UUID.randomUUID().toString();
+        this.gameId = gameId;
     }
 
     public String guessNumber(String guessNumber, Player opponent) {
@@ -48,7 +40,6 @@ public class Player {
 
         String answer = opponent.getAnswer();
 
-        //完全符合
         if (guessNumber.equals(answer)) {
             return "4A";
         }
@@ -68,6 +59,19 @@ public class Player {
         return String.format("%sA%sB", a, b);
     }
 
+    public void setAnswer(String answer) {
+        //答案已設置過
+        if (hasAnswer()) {
+            throw new NumberFormatException("The player has set up his answer. He can’t change his answer.");
+        }
+        checkNumber(answer);
+        this.answer = answer;
+    }
+
+    public boolean hasAnswer() {
+        return this.answer != null && !this.answer.isBlank();
+    }
+
     private void checkNumber(String number) {
 
         if (number == null || number.isBlank()) {
@@ -83,26 +87,4 @@ public class Player {
         }
     }
 
-    public boolean hasAnswer() {
-        return this.answer != null && !this.answer.isBlank();
-    }
-    //result = player1.guessNumber(guessNumber,player2)
-    // guessNumber == player2.answer 完全符合 -> 4A
-    // 當猜謎者猜 1052 時，而答案為 8123，會得到結果 0A2B。
-
-    // 把猜數的第一個數字 1 和答案的第一個數字 8 比對，
-    // 如果猜數的第一個數字 == 答案的第一個數字 -> 1A
-    // -> 若數字符合，猜數位置往下+1，重新和答案的每一位數字比對
-    // -> 若數字不符合，將猜數的第一個數字和答案下一個數字比對
-
-    // 把猜數的第一個數字 1 和答案的第二個數字 1 比對，
-    // 如果猜數的第一個數字 == 答案的第二個數字 -> 1B
-    // -> 若數字符合，猜數位置往下+1，重新和答案的每一位數字比對
-    // -> 若數字不符合，將猜數的第二個數字和答案下一個數字比對
-
-    // 把猜數的第二個數字 0 和答案的第一個數字 8 比對，
-    // 如果猜數的第二個數字 == 答案的第一個數字 -> 1B
-    // -> 若數字符合，猜數位置往下+1，重新和答案的每一位數字比對
-    // -> 若數字不符合，將猜數的第二個數字和答案下一個數字比對
-    //直到所有猜數的數字都和答案的數字比較完 -> 取得比對結果 xAyB
 }

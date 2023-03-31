@@ -14,8 +14,6 @@ import springfox.documentation.spring.data.rest.configuration.SpringDataRestConf
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Collections;
-
 @EnableWebMvc
 @Configuration
 @EnableSwagger2
@@ -26,7 +24,6 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-//                .apis(RequestHandlerSelectors.basePackage("com.mily.springbootreview.controller"))
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();

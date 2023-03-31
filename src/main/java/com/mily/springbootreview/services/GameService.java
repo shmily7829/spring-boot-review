@@ -2,6 +2,7 @@ package com.mily.springbootreview.services;
 
 import com.mily.springbootreview.data.request.GuessPlayerNumberRequest;
 import com.mily.springbootreview.data.request.SetPlayerNumberRequest;
+import com.mily.springbootreview.data.response.GameData;
 import com.mily.springbootreview.data.response.GameStateData;
 import com.mily.springbootreview.data.response.GuessPlayerNumberData;
 import com.mily.springbootreview.entities.Game;
@@ -15,22 +16,35 @@ import com.mily.springbootreview.respositories.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class GameService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
 
-    public Game createGame() {
-
+    public GameData createGame() {
         Game game = new Game();
+        String gameId = UUID.randomUUID().toString();
+        game.setGameId(gameId);
 
-        Player player1 = new Player(game.getPlayer1Id());
-        Player player2 = new Player(game.getPlayer2Id());
-        playerRepository.save(player1);
-        playerRepository.save(player2);
+        List<Player> players = new ArrayList<>();
 
-        return gameRepository.save(game);
+        Player player1 = new Player(gameId);
+        Player player2 = new Player(gameId);
+        players.add(player1);
+        players.add(player2);
+        game.setPlayers(players);
+
+        game.setGameState(GameState.SETTING_ANSWER);
+        game.setTurnPlayerId(player1.getPlayerId());
+        game = gameRepository.save(game);
+        return new GameData(gameId,
+                game.getPlayerId(0),
+                game.getPlayerId(1));
     }
 
     public void setPlayerNumber(SetPlayerNumberRequest request,
@@ -39,21 +53,8 @@ public class GameService {
 
         Game game = findGame(gameId);
         game.setGameState(GameState.SETTING_ANSWER);
+        game.setPlayerNumber(playerId, request.getNumber());
         gameRepository.save(game);
-
-        if (!game.hasPlayer(playerId)) {
-            throw new NotFoundException(String.format("The player %s doesn't exist.", playerId));
-        }
-
-        Player player = findPlayer(playerId);
-
-        //答案已設置過
-        if (player.hasAnswer()) {
-            throw new NumberFormatException("The player has set up his answer. He can’t change his answer.");
-        }
-
-        player.setAnswer(request.getNumber());
-        playerRepository.save(player);
     }
 
     public GuessPlayerNumberData guessPlayerNumber(GuessPlayerNumberRequest request, String gameId) {
@@ -61,20 +62,20 @@ public class GameService {
         Game game = findGame(gameId);
 
         String guesserId = request.getGuesserId();
-        String opponentId = getOpponentId(guesserId, game.getPlayer1Id(), game.getPlayer2Id());
+        String opponentId = game.getOpponentId(guesserId);
         String guessNumber = request.getNumber();
 
         //設置遊戲狀態
         game.setGameState(GameState.GUESSING);
 
         //不在猜測者的回合中
-        if (!game.getTurnPlayerId().equals(guesserId)) {
+        if (!game.isGuesserTurn(guesserId)) {
             throw new NotPlayerTurnException("The player can only guess during his turn!");
         }
 
         //取出猜測者和對手
-        Player guesser = findPlayer(guesserId);
-        Player opponent = findPlayer(opponentId);
+        Player guesser = game.findPlayer(guesserId);
+        Player opponent = game.findPlayer(opponentId);
 
         //雙方玩家必須設置好答案
         if (!guesser.hasAnswer() || !opponent.hasAnswer()) {
@@ -95,10 +96,6 @@ public class GameService {
         gameRepository.save(game);
 
         return guessResult;
-    }
-
-    private String getOpponentId(String guesserId, String player1Id, String player2Id) {
-        return guesserId.equals(player1Id) ? player2Id : player1Id;
     }
 
     private Player findPlayer(String playerId) {

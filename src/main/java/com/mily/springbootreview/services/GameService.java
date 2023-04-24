@@ -10,7 +10,6 @@ import com.mily.springbootreview.entities.GameState;
 import com.mily.springbootreview.entities.Player;
 import com.mily.springbootreview.exceptions.NotFoundException;
 import com.mily.springbootreview.exceptions.NotPlayerTurnException;
-import com.mily.springbootreview.exceptions.NumberFormatException;
 import com.mily.springbootreview.respositories.GameRepository;
 import com.mily.springbootreview.respositories.PlayerRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +53,16 @@ public class GameService {
         Game game = findGame(gameId);
         game.setGameState(GameState.SETTING_ANSWER);
         game.setPlayerNumber(playerId, request.getNumber());
+
+        List<Player> players = game.getPlayers();
+
+        Player player1 = players.get(0);
+        Player player2 = players.get(1);
+
+        if (player1.hasAnswer() && player2.hasAnswer()) {
+            game.setGameState(GameState.GUESSING);
+        }
+
         gameRepository.save(game);
     }
 
@@ -87,7 +96,10 @@ public class GameService {
         //猜數字
         String result = guesser.guessNumber(guessNumber, opponent);
         if ("4A".equals(result)) {
-            guessResult.setWinnerId(guesser.getPlayerId());
+            String winnerId = guesser.getPlayerId();
+            guessResult.setWinnerId(winnerId);
+            game.setGameState(GameState.GAME_OVER);
+            game.setWinnerId(winnerId);
         }
         guessResult.setResult(result);
 

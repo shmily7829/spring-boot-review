@@ -2,8 +2,8 @@ package com.mily.springbootreview.entities;
 
 public enum GameState {
     SETTING_ANSWER("setting-answer"),
-    GUESSING("guessing");
-
+    GUESSING("guessing"),
+    GAME_OVER("game-over");
     private final String state;
 
     GameState(String state) {

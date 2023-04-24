@@ -16,6 +16,9 @@ public class GameStateData {
     private GameState gameState;
     private String turnPlayerId;
     private List<String> guessHistory;
+    private List<String> resultHistory;
+    private String winnerId;
+
     public GameStateData(Game game) {
         this.gameId = game.getGameId();
         this.player1Id = game.getPlayerId(0);
@@ -23,5 +26,7 @@ public class GameStateData {
         this.gameState = game.getGameState();
         this.turnPlayerId = game.getTurnPlayerId();
         this.guessHistory = game.getGuessHistory();
+        this.resultHistory = game.getResultHistory();
+        this.winnerId = game.getWinnerId();
     }
 }

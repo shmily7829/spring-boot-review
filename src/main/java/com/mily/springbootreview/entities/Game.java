@@ -38,9 +38,13 @@ public class Game {
 
     @Column(name = "turn_player_id")
     private String turnPlayerId;
+
+    @Column(name = "winner_id")
+    private String winnerId;
+
     @ElementCollection
     @Column(name = "guess_history")
-    private List<String> guessHistory;
+    private List<String> guessHistory; //guessNumber
 
     public Game() {
 
@@ -79,4 +83,22 @@ public class Game {
     public boolean isGuesserTurn(String guesserId) {
         return getTurnPlayerId().equals(guesserId);
     }
+
+    //gameResult P1 =0.2.4.6, P2 = 1.3.5.7 只要顯示自己的
+    public List<String> getResultHistory() {
+        Player p1 = players.get(0);
+        Player p2 = players.get(1);
+
+        List<String> resultHistory = new ArrayList<>();
+
+        for (int i = 0; i < guessHistory.size(); i++) {
+            if (i % 2 == 0) {
+                resultHistory.add(p1.guessNumber(guessHistory.get(i), p2));
+            } else {
+                resultHistory.add(p2.guessNumber(guessHistory.get(i), p1));
+            }
+        }
+        return resultHistory;
+    }
+
 }

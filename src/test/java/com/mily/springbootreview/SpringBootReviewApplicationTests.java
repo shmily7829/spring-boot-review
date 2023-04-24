@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mily.springbootreview.data.response.GameData;
 import com.mily.springbootreview.data.response.Response;
+import com.mily.springbootreview.entities.Game;
 import com.mily.springbootreview.respositories.GameRepository;
 import com.mily.springbootreview.respositories.PlayerRepository;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 
 import java.util.UUID;
 
@@ -58,6 +60,7 @@ class SpringBootReviewApplicationTests {
         mockMvc.perform(post("/api/v1/games"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.gameId").exists())
+                .andExpect(jsonPath("$.data.gameId").exists())
                 .andExpect(jsonPath("$.data.player1Id").exists())
                 .andExpect(jsonPath("$.data.player2Id").exists())
                 .andExpect(jsonPath("message").value("The game has been created."))
@@ -69,6 +72,7 @@ class SpringBootReviewApplicationTests {
     void givenExistingGameAndPlayer_whenSetNumber_thenReturnsNoContent() throws Exception {
         GameData game = createGame();
 
+        //設置答案
         JSONObject requestBody = new JSONObject()
                 .put("number", "4567");
 
@@ -76,7 +80,8 @@ class SpringBootReviewApplicationTests {
         String player1Id = game.getPlayer1Id();
 
         setPlayerAnswer(gameId, player1Id, requestBody)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("message").value(""));
     }
 
     @DisplayName("設置階段遊戲不存在")

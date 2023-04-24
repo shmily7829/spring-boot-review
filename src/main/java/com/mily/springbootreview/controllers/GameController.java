@@ -20,6 +20,7 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    @CrossOrigin
     @PostMapping("/v1/games")
     public Response<GameData> createGame() {
 
@@ -31,7 +32,7 @@ public class GameController {
 
         return response;
     }
-
+    @CrossOrigin
     @PutMapping("v1/games/{gameId}/players/{playerId}/answer")
     public Response<GameData> setPlayerNumber(@RequestBody SetPlayerNumberRequest request,
                                               @PathVariable String gameId,
@@ -42,7 +43,7 @@ public class GameController {
         response.setMessage("The answer has been set.");
         return response;
     }
-
+    @CrossOrigin
     @PostMapping("/v1/games/{gameId}/guess")
     public Response<GuessPlayerNumberData> guessPlayerNumber(@RequestBody GuessPlayerNumberRequest request,
                                                              @PathVariable String gameId) {
@@ -57,7 +58,7 @@ public class GameController {
 
         return response;
     }
-
+    @CrossOrigin
     @GetMapping("/v1/games/{gameId}")
     public ResponseEntity<Response<GameStateData>> getGameState(@PathVariable String gameId) {
 
